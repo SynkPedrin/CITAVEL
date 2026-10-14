@@ -1,0 +1,1 @@
+import { logout,assertRequestMutation } from '@/lib/auth';import { ok,fail } from '../../_utils';export async function POST(request:Request){try{assertRequestMutation(request);await logout();return ok({ok:true})}catch(e){return fail(e)}}

@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.runtime/
+clients/*/data/
+clients/*/evidence/
+clients/*/knowledge/
+clients/*/reports/
+clients/*/dashboard/data.json
+*.log

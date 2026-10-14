@@ -1,0 +1,479 @@
+{
+  "id": "citavelCore00V2",
+  "name": "CITAVEL CORE — 00 MASTER",
+  "nodes": [
+    {
+      "id": "executar",
+      "name": "Executar",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "entrada_core",
+      "name": "Entrada CORE",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        200
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "validar_cliente",
+      "name": "Validar cliente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        250,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://citavel-engine:8787/v1/run",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({client_id:$json.client_id || 'cosentino',mode:$json.mode || 'ONBOARDING',batch_id:$json.batch_id,errors:$json.errors || [],stage:'CONFIG'}) }}",
+        "options": {
+          "timeout": 1200000
+        }
+      }
+    },
+    {
+      "id": "discover",
+      "name": "DISCOVER",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        500,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "citavelCore01V2",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "crawl",
+      "name": "CRAWL",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        730,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "citavelCore02V2",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "audit",
+      "name": "AUDIT",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        960,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "citavelCore03V2",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "demand",
+      "name": "DEMAND",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1190,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "citavelCore04V2",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "intel",
+      "name": "INTEL",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1420,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "citavelCore05V2",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "actions",
+      "name": "ACTIONS",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1650,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "citavelCore06V2",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "content",
+      "name": "CONTENT",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1880,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "citavelCore07V2",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "publish",
+      "name": "PUBLISH",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        2110,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "citavelCore08V2",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "monitor",
+      "name": "MONITOR",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        2340,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "citavelCore09V2",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "report",
+      "name": "REPORT",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        2570,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "citavelCore10V2",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "sheets",
+      "name": "SHEETS",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        2500,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "citavelCore11V2",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "resumo_final",
+      "name": "Resumo final",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2750,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://citavel-engine:8787/v1/run",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({client_id:$('Validar cliente').first().json.client_id,mode:$('Validar cliente').first().json.mode,stage:'CONFIG'}) }}",
+        "options": {
+          "timeout": 1200000
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Executar": {
+      "main": [
+        [
+          {
+            "node": "Validar cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrada CORE": {
+      "main": [
+        [
+          {
+            "node": "Validar cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar cliente": {
+      "main": [
+        [
+          {
+            "node": "DISCOVER",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DISCOVER": {
+      "main": [
+        [
+          {
+            "node": "CRAWL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CRAWL": {
+      "main": [
+        [
+          {
+            "node": "AUDIT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AUDIT": {
+      "main": [
+        [
+          {
+            "node": "DEMAND",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DEMAND": {
+      "main": [
+        [
+          {
+            "node": "INTEL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "INTEL": {
+      "main": [
+        [
+          {
+            "node": "ACTIONS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ACTIONS": {
+      "main": [
+        [
+          {
+            "node": "CONTENT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONTENT": {
+      "main": [
+        [
+          {
+            "node": "PUBLISH",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PUBLISH": {
+      "main": [
+        [
+          {
+            "node": "MONITOR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MONITOR": {
+      "main": [
+        [
+          {
+            "node": "REPORT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "REPORT": {
+      "main": [
+        [
+          {
+            "node": "SHEETS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SHEETS": {
+      "main": [
+        [
+          {
+            "node": "Resumo final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true,
+    "executionTimeout": 1800
+  },
+  "pinData": {},
+  "tags": []
+}

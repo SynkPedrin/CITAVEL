@@ -1,0 +1,86 @@
+[
+  {
+    "id": "citavelCore01V2",
+    "name": "CITAVEL CORE — 01 DISCOVER",
+    "url": "http://localhost:5678/workflow/citavelCore01V2",
+    "status": "MANUAL_READY"
+  },
+  {
+    "id": "citavelCore02V2",
+    "name": "CITAVEL CORE — 02 CRAWL",
+    "url": "http://localhost:5678/workflow/citavelCore02V2",
+    "status": "MANUAL_READY"
+  },
+  {
+    "id": "citavelCore03V2",
+    "name": "CITAVEL CORE — 03 AUDIT",
+    "url": "http://localhost:5678/workflow/citavelCore03V2",
+    "status": "MANUAL_READY"
+  },
+  {
+    "id": "citavelCore04V2",
+    "name": "CITAVEL CORE — 04 DEMAND",
+    "url": "http://localhost:5678/workflow/citavelCore04V2",
+    "status": "MANUAL_READY"
+  },
+  {
+    "id": "citavelCore05V2",
+    "name": "CITAVEL CORE — 05 INTELLIGENCE",
+    "url": "http://localhost:5678/workflow/citavelCore05V2",
+    "status": "MANUAL_READY"
+  },
+  {
+    "id": "citavelCore06V2",
+    "name": "CITAVEL CORE — 06 ACTIONS",
+    "url": "http://localhost:5678/workflow/citavelCore06V2",
+    "status": "MANUAL_READY"
+  },
+  {
+    "id": "citavelCore07V2",
+    "name": "CITAVEL CORE — 07 CONTENT",
+    "url": "http://localhost:5678/workflow/citavelCore07V2",
+    "status": "MANUAL_READY"
+  },
+  {
+    "id": "citavelCore09V2",
+    "name": "CITAVEL CORE — 09 MONITOR",
+    "url": "http://localhost:5678/workflow/citavelCore09V2",
+    "status": "MANUAL_READY"
+  },
+  {
+    "id": "citavelCore10V2",
+    "name": "CITAVEL CORE — 10 REPORT",
+    "url": "http://localhost:5678/workflow/citavelCore10V2",
+    "status": "MANUAL_READY"
+  },
+  {
+    "id": "citavelCore08V2",
+    "name": "CITAVEL CORE — 08 PUBLISH",
+    "url": "http://localhost:5678/workflow/citavelCore08V2",
+    "status": "MANUAL_READY"
+  },
+  {
+    "id": "citavelCore00V2",
+    "name": "CITAVEL CORE — 00 MASTER",
+    "url": "http://localhost:5678/workflow/citavelCore00V2",
+    "status": "MANUAL_READY"
+  },
+  {
+    "id": "citavelCosentV1",
+    "name": "CITAVEL CLIENT — COSENTINO",
+    "url": "http://localhost:5678/workflow/citavelCosentV1",
+    "status": "MANUAL_READY"
+  },
+  {
+    "id": "citavelTempltV1",
+    "name": "CITAVEL CLIENT TEMPLATE",
+    "url": "http://localhost:5678/workflow/citavelTempltV1",
+    "status": "MANUAL_READY"
+  },
+  {
+    "id": "citavelCore11V2",
+    "name": "CITAVEL CORE — 11 SHEETS",
+    "url": "http://localhost:5678/workflow/citavelCore11V2",
+    "status": "MANUAL_READY"
+  }
+]

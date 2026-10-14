@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: citavel-manager-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: citavel_manager
+      POSTGRES_USER: citavel
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Configure .env.local}
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - manager_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U citavel -d citavel_manager"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+volumes:
+  manager_db:

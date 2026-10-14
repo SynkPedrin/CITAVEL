@@ -1,0 +1,1 @@
+import { getSession } from '@/lib/auth';import { ok } from '../../_utils';export async function GET(){const actor=await getSession();return ok({actor:actor?{id:actor.id,name:actor.name,email:actor.email,role:actor.role,clientIds:actor.clientIds,forcePasswordChange:actor.forcePasswordChange}:null})}

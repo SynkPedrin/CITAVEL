@@ -1,0 +1,1 @@
+{"gemini":{"status":"DEGRADED","generation_status":"FAILED","note":"Geração indisponível: MODEL_HTTP_503. Ollama permanece como fallback."},"ollama":null}

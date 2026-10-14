@@ -1,0 +1,412 @@
+{
+  "id": "citavelCore11V2",
+  "name": "CITAVEL CORE — 11 SHEETS",
+  "nodes": [
+    {
+      "id": "executar",
+      "name": "Executar",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "entrada_core",
+      "name": "Entrada CORE",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        200
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "payload",
+      "name": "Payload",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        250,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "=http://citavel-engine:8787/v1/sheets/{{ $json.client_id || 'cosentino' }}/payload",
+        "options": {
+          "timeout": 1200000
+        }
+      }
+    },
+    {
+      "id": "autorizacao_sheets",
+      "name": "Autorizacao Sheets",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        400,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.authorized }}",
+              "value2": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "sheets_aguardando_autorizacao",
+      "name": "Sheets aguardando autorizacao",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        700,
+        -220
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "planilha_existe",
+      "name": "Planilha existe",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        500,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.spreadsheet_id || \"\" }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "criar_planilha",
+      "name": "Criar planilha",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        750,
+        220
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Payload').first().json.create_body) }}",
+        "options": {
+          "timeout": 1200000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api"
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qgVeaBRqX7i7UNpM",
+          "name": "Google Sheets - Clinica VET"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 1500
+    },
+    {
+      "id": "vincular_planilha",
+      "name": "Vincular planilha",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1000,
+        220
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=http://citavel-engine:8787/v1/sheets/{{ $('Payload').first().json.client_id }}/linked",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({spreadsheetId:$json.spreadsheetId}) }}",
+        "options": {
+          "timeout": 1200000
+        }
+      }
+    },
+    {
+      "id": "ler_campos_de_controle",
+      "name": "Ler campos de controle",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        750,
+        -100
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $json.spreadsheet_id }}/values:batchGet?ranges=01_EVIDENCE&ranges=03_PROMPTS&ranges=04_AI_RUNS&ranges=08_ACTIONS&ranges=13_LEADS",
+        "options": {
+          "timeout": 1200000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api"
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qgVeaBRqX7i7UNpM",
+          "name": "Google Sheets - Clinica VET"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 1500
+    },
+    {
+      "id": "importar_revisoes",
+      "name": "Importar revisoes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        -100
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=http://citavel-engine:8787/v1/sheets/{{ $('Payload').first().json.client_id }}/import",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({valueRanges:$json.valueRanges}) }}",
+        "options": {
+          "timeout": 1200000
+        }
+      }
+    },
+    {
+      "id": "atualizar_payload",
+      "name": "Atualizar payload",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1130,
+        -100
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "=http://citavel-engine:8787/v1/sheets/{{ $('Payload').first().json.client_id }}/payload",
+        "options": {
+          "timeout": 1200000
+        }
+      }
+    },
+    {
+      "id": "gravar_16_abas",
+      "name": "Gravar 16 abas",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1300,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $json.spreadsheet_id }}/values:batchUpdate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.batch_body) }}",
+        "options": {
+          "timeout": 1200000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api"
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qgVeaBRqX7i7UNpM",
+          "name": "Google Sheets - Clinica VET"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 1500
+    },
+    {
+      "id": "registrar_sincronizacao",
+      "name": "Registrar sincronizacao",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1550,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=http://citavel-engine:8787/v1/sheets/{{ $('Payload').first().json.client_id }}/status",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({status:'READY'}) }}",
+        "options": {
+          "timeout": 1200000
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Executar": {
+      "main": [
+        [
+          {
+            "node": "Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrada CORE": {
+      "main": [
+        [
+          {
+            "node": "Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Payload": {
+      "main": [
+        [
+          {
+            "node": "Autorizacao Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Autorizacao Sheets": {
+      "main": [
+        [
+          {
+            "node": "Planilha existe",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sheets aguardando autorizacao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Planilha existe": {
+      "main": [
+        [
+          {
+            "node": "Ler campos de controle",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Criar planilha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler campos de controle": {
+      "main": [
+        [
+          {
+            "node": "Importar revisoes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Importar revisoes": {
+      "main": [
+        [
+          {
+            "node": "Atualizar payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar payload": {
+      "main": [
+        [
+          {
+            "node": "Gravar 16 abas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar planilha": {
+      "main": [
+        [
+          {
+            "node": "Vincular planilha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vincular planilha": {
+      "main": [
+        [
+          {
+            "node": "Gravar 16 abas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gravar 16 abas": {
+      "main": [
+        [
+          {
+            "node": "Registrar sincronizacao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true,
+    "executionTimeout": 1800
+  },
+  "pinData": {},
+  "tags": []
+}

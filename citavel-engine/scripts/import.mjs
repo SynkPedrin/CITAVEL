@@ -1,0 +1,2 @@
+import fs from 'node:fs/promises';
+const [client='cosentino',kind='golden',file]=process.argv.slice(2);if(!file||!['golden','evidence'].includes(kind))throw new Error('Uso: node scripts/import.mjs cliente golden|evidence arquivo.json|csv');const r=await fetch((process.env.CITAVEL_URL||'http://localhost:8788')+'/v1/import/'+encodeURIComponent(client)+'/'+kind,{method:'POST',headers:{'content-type':file.endsWith('.csv')?'text/csv':'application/json'},body:await fs.readFile(file,'utf8')});console.log(await r.text());if(!r.ok)process.exitCode=1;

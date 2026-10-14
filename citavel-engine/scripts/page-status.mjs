@@ -1,0 +1,1 @@
+const [client_id,page_id,status,published_url]=process.argv.slice(2);const r=await fetch((process.env.CITAVEL_URL||'http://localhost:8788')+'/v1/lifecycle/'+encodeURIComponent(client_id)+'/page',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({page_id,status,published_url})});console.log(await r.text());if(!r.ok)process.exitCode=1;

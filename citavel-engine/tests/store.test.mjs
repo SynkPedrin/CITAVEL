@@ -1,0 +1,14 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+process.env.CITAVEL_ROOT=await fs.mkdtemp(path.join(os.tmpdir(),'citavel-test-'));
+const {createClient,loadConfig,loadState,saveState,validateClientId,upsert,withClientLock,clientDir,redactError}=await import('../core/store.mjs');
+const {parseCSV}=await import('../core/imports.mjs');
+test('client loader rejects traversal and incomplete config and template does not copy pilot data',async()=>{assert.throws(()=>validateClientId('../cosentino'));await createClient('qa-empty');await assert.rejects(loadConfig('qa-empty'),/BRAND_REQUIRED/);await createClient('qa-test',{brand:'Fixture',domain:'https://example.com/',locations:['Fixture City']});const s=await loadState('qa-test');assert.equal(s.prompts.length,0);assert.equal(s.client.google.ga4_property_id,null);assert.equal(s.client.automation.auto_publish,false);});
+test('upsert preserves workflow state while refreshing observed data',()=>{let rows=[{id:'1',status:'DONE',value:1}];rows=upsert(rows,[{id:'1',status:'PROPOSED',value:2}],'id',['status']);rows=upsert(rows,[{id:'1',status:'PROPOSED',value:2}],'id',['status']);assert.equal(rows.length,1);assert.equal(rows[0].status,'DONE');assert.equal(rows[0].value,2);});
+test('per-client lock prevents concurrent lost updates',async()=>{let value=0;await Promise.all(Array.from({length:5},()=>withClientLock('qa-lock',async()=>{const previous=value;await new Promise(r=>setTimeout(r,2));value=previous+1;})));assert.equal(value,5);});
+test('CSV supports quoted commas, multiline records and protects malformed input',()=>{assert.deepEqual(parseCSV('a,b\r\n"x,y","line1\nline2"'),[{a:'x,y',b:'line1\nline2'}]);assert.throws(()=>parseCSV('a,b\n"broken'),/UNCLOSED/);assert.throws(()=>parseCSV('a,a\nx,y'),/DUPLICATE/);});
+test('GOLDEN import is idempotent and never accepts an unknown prompt or LAB label',async()=>{const {generatePrompts}=await import('../core/intelligence.mjs');const {importGolden}=await import('../core/engine.mjs');const s=await loadState('qa-test');s.prompts=generatePrompts(s.client);await saveState('qa-test',s);const rows=[{platform:'ChatGPT',timestamp:'2026-10-01T12:00:00Z',prompt_id:s.prompts[0].prompt_id,response:'Fixture aparece no material https://example.com/',run_type:'LAB'}];await importGolden('qa-test',rows);await importGolden('qa-test',rows);const actual=await loadState('qa-test');assert.equal(actual.ai_runs.length,1);assert.equal(actual.ai_runs[0].run_type,'GOLDEN');await assert.rejects(importGolden('qa-test',[{...rows[0],prompt_id:'nonexistent'}]));});
+test.after(async()=>{await fs.rm(process.env.CITAVEL_ROOT,{recursive:true,force:true});});

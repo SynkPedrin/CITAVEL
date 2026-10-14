@@ -1,0 +1,31 @@
+services:
+  engine:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: citavel-engine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8788:8787"
+    environment:
+      HOST: 0.0.0.0
+      PUBLIC_ORIGIN: http://localhost:8788
+      CITAVEL_ROOT: /data
+      OLLAMA_URL: http://host.docker.internal:11434
+      GEMINI_API_KEY_FILE: /run/secrets/gemini_api_key
+    secrets:
+      - gemini_api_key
+    volumes:
+      - ../clients:/data/clients
+      - ../core:/app/core:ro
+      - ../server.mjs:/app/server.mjs:ro
+    networks:
+      - n8n
+networks:
+  n8n:
+    external: true
+    name: citavel-local
+
+secrets:
+  gemini_api_key:
+    file: ../.runtime/gemini.key

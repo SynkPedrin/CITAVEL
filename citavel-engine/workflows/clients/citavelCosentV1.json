@@ -1,0 +1,98 @@
+{
+  "id": "citavelCosentV1",
+  "name": "CITAVEL CLIENT — COSENTINO",
+  "nodes": [
+    {
+      "id": "executar",
+      "name": "Executar",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "client_config",
+      "name": "CLIENT CONFIG",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        250,
+        0
+      ],
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "client_id",
+              "value": "cosentino"
+            },
+            {
+              "name": "mode",
+              "value": "ONBOARDING"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "master",
+      "name": "MASTER",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        500,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "citavelCore00V2",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Executar": {
+      "main": [
+        [
+          {
+            "node": "CLIENT CONFIG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CLIENT CONFIG": {
+      "main": [
+        [
+          {
+            "node": "MASTER",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true,
+    "executionTimeout": 1800
+  },
+  "pinData": {},
+  "tags": []
+}

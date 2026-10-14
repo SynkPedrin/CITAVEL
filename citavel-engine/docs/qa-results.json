@@ -1,0 +1,88 @@
+{
+  "status": "PARTIALLY_READY",
+  "unit_tests": {
+    "passed": 47,
+    "failed": 0
+  },
+  "e2e_local": "PASS",
+  "e2e_n8n": "PASS",
+  "idempotency": {
+    "status": "PASS",
+    "before": {
+      "evidence": 59,
+      "pages": 9,
+      "prompts": 40,
+      "ai_runs": 4,
+      "sources": 4,
+      "gaps": 4,
+      "actions": 6,
+      "experiments": 1,
+      "reports": 1
+    },
+    "after": {
+      "evidence": 59,
+      "pages": 9,
+      "prompts": 40,
+      "ai_runs": 4,
+      "sources": 4,
+      "gaps": 4,
+      "actions": 6,
+      "experiments": 1,
+      "reports": 1
+    }
+  },
+  "fixtures_isolated": true,
+  "secrets_scan": "PASS: no provided secrets in code, workflows, docs or artifacts",
+  "google_sheets": "AUTHORIZATION_PENDING",
+  "gemini": {
+    "authentication": "PASS",
+    "generation": "DEGRADED",
+    "legacy_model_http": 404,
+    "current_model_http": 503,
+    "fallback": "Ollama qwen3.5:4b PASS"
+  },
+  "ollama": "PASS",
+  "search_console": "CONFIG_AND_OAUTH_REQUIRED",
+  "ga4": "CONFIG_AND_OAUTH_REQUIRED",
+  "gtm": "CONFIG_AND_OAUTH_REQUIRED",
+  "golden_runs": 0,
+  "content_published": 0,
+  "crawl_http_success_pages": 8,
+  "known_limits": [
+    "Bounded crawl of 8 pages; no client-side JavaScript rendering",
+    "4 LAB runs from 40 prompts, not GOLDEN visibility evidence",
+    "Sources are observed model citations, not independently verified retrieval",
+    "Public factual content awaits operator verification",
+    "Google Sheets write/read not executed without explicit account authorization"
+  ],
+  "recovery": {
+    "verified_on": "2026-10-05",
+    "n8n_container": "n8n",
+    "n8n_version": "2.35.5",
+    "n8n_workflow_execution": "PASS",
+    "service_health": "running healthy",
+    "dedicated_network": "citavel-local",
+    "lab_to_golden_overwrite_guard": "PASS"
+  },
+  "visual_qa": {
+    "verified_on": "2026-10-01",
+    "dashboard": "PASS",
+    "responsive_no_horizontal_overflow": "PASS",
+    "draft_link": "PASS"
+  },
+  "weekly_2026_10_05": {
+    "status": "READY",
+    "summary": {
+      "evidence": 59,
+      "pages": 9,
+      "prompts": 40,
+      "ai_runs": 8,
+      "sources": 5,
+      "gaps": 4,
+      "actions": 6,
+      "experiments": 1,
+      "reports": 2
+    },
+    "stage_errors": []
+  }
+}

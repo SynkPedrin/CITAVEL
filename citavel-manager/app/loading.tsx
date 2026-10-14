@@ -1,0 +1,1 @@
+export default function Loading() { return <div className="page skeleton-page" aria-label="Carregando"><div className="skeleton" style={{width:'30%',height:28}}/><div className="skeleton" style={{height:120}}/><div className="skeleton" style={{height:300}}/></div>; }

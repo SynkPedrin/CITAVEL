@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import { clientCreateSchema,runSchema } from '../lib/validation';
+test('client wizard rejects local and credential-bearing domains',()=>{assert.throws(()=>clientCreateSchema.parse({name:'X',brandName:'X',domain:'http://127.0.0.1',industry:'a',location:'b'}));assert.throws(()=>clientCreateSchema.parse({name:'X',brandName:'X',domain:'https://u:p@example.com',industry:'a',location:'b'}))});
+test('run requires explicit confirmation',()=>{assert.throws(()=>runSchema.parse({mode:'WEEKLY',confirmed:false}));assert.equal(runSchema.parse({mode:'WEEKLY',confirmed:true}).mode,'WEEKLY')});

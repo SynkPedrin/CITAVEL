@@ -1,0 +1,580 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  ANALYST
+  CLIENT_ADMIN
+  CLIENT_VIEWER
+}
+model Organization {
+  id String @id @default(cuid())
+  name String
+  slug String @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  memberships Membership[]
+  clients Client[]
+  googleConnections GoogleConnection[]
+  @@map("organizations")
+}
+model User {
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  passwordHash String @map("password_hash")
+  status String @default("ACTIVE")
+  mustChangePassword Boolean @default(false) @map("must_change_password")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  memberships Membership[]
+  clientUsers ClientUser[]
+  sessions Session[]
+  @@map("users")
+}
+model Membership {
+  id String @id @default(cuid())
+  organizationId String @map("organization_id")
+  userId String @map("user_id")
+  role Role
+  organization Organization @relation(fields:[organizationId], references:[id], onDelete:Cascade)
+  user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+  @@unique([organizationId,userId])
+  @@map("memberships")
+}
+model ClientUser {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  userId String @map("user_id")
+  role Role
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+  @@unique([clientId,userId])
+  @@map("client_users")
+}
+model Session {
+  id String @id @default(cuid())
+  tokenHash String @unique @map("token_hash")
+  userId String @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+  @@index([expiresAt])
+  @@map("sessions")
+}
+model LoginAttempt {
+  identifier String @id
+  attempts Int @default(0)
+  windowStart DateTime @default(now()) @map("window_start")
+  blockedUntil DateTime? @map("blocked_until")
+  @@map("login_attempts")
+}
+model Client {
+  id String @id @default(cuid())
+  organizationId String @map("organization_id")
+  clientKey String @unique @map("client_key")
+  name String
+  brandName String @map("brand_name")
+  domain String
+  industry String @default("")
+  location String @default("")
+  status String @default("ONBOARDING")
+  engineClientId String @unique @map("engine_client_id")
+  metadata Json @default("{}")
+  brandIdentity Json? @map("brand_identity")
+  lastSyncedAt DateTime? @map("last_synced_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  organization Organization @relation(fields:[organizationId], references:[id], onDelete:Cascade)
+  clientUsers ClientUser[]
+  automations Automation[]
+  automationRuns AutomationRun[]
+  integrations Integration[]
+  prompts Prompt[]
+  aiRuns AiRun[]
+  sources Source[]
+  competitors Competitor[]
+  gaps Gap[]
+  actions Action[]
+  pages Page[]
+  deployments Deployment[]
+  seoSnapshots SeoSnapshot[]
+  demandMetrics DemandMetric[]
+  experiments Experiment[]
+  reports Report[]
+  systemEvents SystemEvent[]
+  propertyBindings ClientPropertyBinding[]
+  gscSyncJobs GscSyncJob[]
+  gscDailyMetrics GscDailyMetric[]
+  gscDimensionMetrics GscDimensionMetric[]
+  gscQueryLabels GscQueryLabel[]
+  reportSnapshots ReportSnapshot[]
+  @@index([organizationId])
+  @@map("clients")
+}
+model Automation {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  externalId String @map("external_id")
+  provider String @default("N8N")
+  externalWorkflowId String @map("external_workflow_id")
+  name String
+  status String @default("PENDING")
+  lastRunAt DateTime? @map("last_run_at")
+  nextRunAt DateTime? @map("next_run_at")
+  enabled Boolean @default(true)
+  metadata Json @default("{}")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  runs AutomationRun[]
+  @@unique([clientId,externalId])
+  @@index([clientId,externalWorkflowId])
+  @@map("automations")
+}
+model AutomationRun {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  automationId String @map("automation_id")
+  externalExecutionId String? @map("external_execution_id")
+  status String @default("QUEUED")
+  mode String @default("WEEKLY")
+  startedAt DateTime? @map("started_at")
+  finishedAt DateTime? @map("finished_at")
+  durationMs Int? @map("duration_ms")
+  summary Json @default("{}")
+  errorMessage String? @map("error_message")
+  createdAt DateTime @default(now()) @map("created_at")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  automation Automation @relation(fields:[automationId], references:[id], onDelete:Cascade)
+  @@unique([clientId,externalExecutionId])
+  @@index([clientId,status])
+  @@map("automation_runs")
+}
+model Integration {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  provider String
+  status String @default("PENDING")
+  metadata Json @default("{}") @map("metadata_json")
+  lastSyncAt DateTime? @map("last_sync_at")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  @@unique([clientId,provider])
+  @@map("integrations")
+}
+model Prompt {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  externalId String @map("external_prompt_id")
+  prompt String
+  cluster String
+  intent String
+  commercialScore Float? @map("commercial_score")
+  priority String @default("P2")
+  active Boolean @default(true)
+  data Json @default("{}")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  aiRuns AiRun[]
+  @@unique([clientId,externalId])
+  @@index([clientId,cluster])
+  @@map("prompts")
+}
+model AiRun {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  externalId String @map("external_id")
+  promptId String? @map("prompt_id")
+  platform String
+  model String?
+  runType String @map("run_type")
+  status String @default("SUCCESS")
+  brandMentioned Boolean? @map("brand_mentioned")
+  brandRecommended Boolean? @map("brand_recommended")
+  position Int?
+  sentiment String?
+  response String
+  data Json @default("{}")
+  createdAt DateTime @default(now()) @map("created_at")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  prompt Prompt? @relation(fields:[promptId], references:[id], onDelete:SetNull)
+  @@unique([clientId,externalId])
+  @@index([clientId,runType,createdAt])
+  @@map("ai_runs")
+}
+model Source {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  externalId String @map("external_id")
+  domain String
+  url String
+  runType String @default("LAB") @map("run_type")
+  citationCount Int @default(0) @map("citation_count")
+  clientPresent Boolean? @map("client_present")
+  opportunityScore Float? @map("opportunity_score")
+  data Json @default("{}")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  @@unique([clientId,externalId])
+  @@map("sources")
+}
+model Competitor {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  externalId String @map("external_id")
+  name String
+  domain String?
+  mentions Int?
+  recommendations Int?
+  shareOfVoice Float? @map("share_of_voice")
+  data Json @default("{}")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  @@unique([clientId,externalId])
+  @@map("competitors")
+}
+model Gap {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  externalId String @map("external_id")
+  type String
+  severity String
+  description String
+  confidence Float?
+  status String @default("OPEN")
+  data Json @default("{}")
+  createdAt DateTime @default(now()) @map("created_at")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  actions Action[]
+  @@unique([clientId,externalId])
+  @@map("gaps")
+}
+model Action {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  externalId String @map("external_id")
+  gapId String? @map("gap_id")
+  type String
+  priority String
+  priorityScore Float? @map("priority_score")
+  title String
+  description String
+  status String @default("PROPOSED")
+  managerStatus Boolean @default(false) @map("manager_status")
+  actionType String? @map("action_type")
+  automationLevel String? @map("automation_level")
+  risk String?
+  lifecycle Json?
+  preview Json?
+  execution Json?
+  deployment Json?
+  data Json @default("{}")
+  createdAt DateTime @default(now()) @map("created_at")
+  completedAt DateTime? @map("completed_at")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  gap Gap? @relation(fields:[gapId], references:[id], onDelete:SetNull)
+  deployments Deployment[]
+  executions ActionExecution[]
+  results ActionResult[]
+  @@unique([clientId,externalId])
+  @@index([clientId,status])
+  @@map("actions")
+}
+model ActionExecution {
+  id String @id @default(cuid())
+  actionId String @map("action_id")
+  status String
+  log Json @default("[]")
+  startedAt DateTime @map("started_at")
+  finishedAt DateTime? @map("finished_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  action Action @relation(fields:[actionId], references:[id], onDelete:Cascade)
+  @@unique([actionId,startedAt])
+  @@map("action_executions")
+}
+model Deployment {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  actionId String? @map("action_id")
+  pageId String? @map("page_id")
+  adapter String
+  branch String?
+  commit String?
+  url String?
+  status String
+  rollback Json?
+  publishedAt DateTime? @map("published_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  action Action? @relation(fields:[actionId], references:[id], onDelete:Cascade)
+  page Page? @relation(fields:[pageId], references:[id], onDelete:SetNull)
+  @@index([clientId,status])
+  @@map("deployments")
+}
+model ActionResult {
+  id String @id @default(cuid())
+  actionId String @map("action_id")
+  measuredAt DateTime @map("measured_at")
+  window String
+  baseline Json @default("{}")
+  current Json @default("{}")
+  deltas Json @default("{}")
+  resultStatus String @map("result_status")
+  notes String?
+  createdAt DateTime @default(now()) @map("created_at")
+  action Action @relation(fields:[actionId], references:[id], onDelete:Cascade)
+  @@unique([actionId,window,measuredAt])
+  @@map("action_results")
+}
+model Page {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  externalId String @map("external_id")
+  url String?
+  title String
+  type String
+  status String
+  targetPrompts Json @default("[]") @map("target_prompts_json")
+  publishedAt DateTime? @map("published_at")
+  managerStatus Boolean @default(false) @map("manager_status")
+  data Json @default("{}")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  deployments Deployment[]
+  @@unique([clientId,externalId])
+  @@map("pages")
+}
+model SeoSnapshot {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  externalId String @map("external_id")
+  date DateTime
+  healthScore Float? @map("health_score")
+  indexedPages Int? @map("indexed_pages")
+  criticalIssues Int? @map("critical_issues")
+  warnings Int?
+  impressions Int?
+  clicks Int?
+  data Json @default("{}")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  @@unique([clientId,externalId])
+  @@map("seo_snapshots")
+}
+model DemandMetric {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  externalId String @map("external_id")
+  date DateTime
+  runType String @map("run_type")
+  recommendationCoverage Float? @map("recommendation_coverage")
+  mentionRate Float? @map("mention_rate")
+  citationRate Float? @map("citation_rate")
+  shareOfVoice Float? @map("share_of_voice")
+  brandSearchImpressions Int? @map("brand_search_impressions")
+  aiSessions Int? @map("ai_sessions")
+  aiLeads Int? @map("ai_leads")
+  data Json @default("{}")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  @@unique([clientId,externalId])
+  @@map("demand_metrics")
+}
+model Experiment {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  externalId String @map("external_id")
+  name String
+  hypothesis String
+  status String
+  baseline Json @default("{}") @map("baseline_json")
+  current Json @default("{}") @map("current_json")
+  startedAt DateTime? @map("started_at")
+  endedAt DateTime? @map("ended_at")
+  data Json @default("{}")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  @@unique([clientId,externalId])
+  @@map("experiments")
+}
+model Report {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  externalId String @map("external_id")
+  periodStart DateTime @map("period_start")
+  periodEnd DateTime @map("period_end")
+  type String
+  summary String
+  filePath String? @map("file_path")
+  data Json @default("{}")
+  createdAt DateTime @default(now()) @map("created_at")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  @@unique([clientId,externalId])
+  @@map("reports")
+}
+model SystemEvent {
+  id String @id @default(cuid())
+  clientId String? @map("client_id")
+  actorId String? @map("actor_id")
+  externalId String? @map("external_id")
+  level String @default("INFO")
+  source String
+  message String
+  metadata Json @default("{}")
+  createdAt DateTime @default(now()) @map("created_at")
+  client Client? @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  @@unique([clientId,externalId])
+  @@index([createdAt,level])
+  @@map("system_events")
+}
+
+// ---- Google Integration Hub (Search Console) ----
+// One Google account per organization. The refresh token is AES-256-GCM encrypted at rest and never leaves the server.
+model GoogleConnection {
+  id String @id @default(cuid())
+  organizationId String @map("organization_id")
+  googleEmail String? @map("google_email")
+  googleSubject String? @map("google_subject")
+  status String @default("NOT_CONNECTED")
+  grantedScopes String @default("") @map("granted_scopes")
+  refreshTokenEnc String? @map("refresh_token_enc")
+  connectedById String? @map("connected_by_id")
+  connectedAt DateTime? @map("connected_at")
+  lastRefreshAt DateTime? @map("last_refresh_at")
+  lastDiscoveryAt DateTime? @map("last_discovery_at")
+  lastError String? @map("last_error")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  organization Organization @relation(fields:[organizationId], references:[id], onDelete:Cascade)
+  properties SearchConsoleProperty[]
+  @@unique([organizationId])
+  @@map("google_connections")
+}
+model SearchConsoleProperty {
+  id String @id @default(cuid())
+  connectionId String @map("connection_id")
+  organizationId String @map("organization_id")
+  siteUrl String @map("site_url")
+  propertyType String @map("property_type")
+  permissionLevel String @map("permission_level")
+  accessible Boolean @default(true)
+  lastSeenAt DateTime @default(now()) @map("last_seen_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  connection GoogleConnection @relation(fields:[connectionId], references:[id], onDelete:Cascade)
+  binding ClientPropertyBinding?
+  @@unique([organizationId,siteUrl])
+  @@map("search_console_properties")
+}
+// A property belongs to at most one client (unique propertyId) so its data can never be attributed to two tenants.
+model ClientPropertyBinding {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  propertyId String @unique @map("property_id")
+  isPrimary Boolean @default(true) @map("is_primary")
+  status String @default("ACTIVE")
+  boundById String @map("bound_by_id")
+  boundAt DateTime @default(now()) @map("bound_at")
+  unboundAt DateTime? @map("unbound_at")
+  lastSuccessfulSyncAt DateTime? @map("last_successful_sync_at")
+  availableStartDate String? @map("available_start_date")
+  availableEndDate String? @map("available_end_date")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  property SearchConsoleProperty @relation(fields:[propertyId], references:[id], onDelete:Cascade)
+  jobs GscSyncJob[]
+  @@index([clientId,status])
+  @@map("client_property_bindings")
+}
+model GscSyncJob {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  bindingId String @map("binding_id")
+  type String
+  status String @default("QUEUED")
+  idempotencyKey String @unique @map("idempotency_key")
+  trigger String @default("MANAGER")
+  requestedStartDate String @map("requested_start_date")
+  requestedEndDate String @map("requested_end_date")
+  availableStartDate String? @map("available_start_date")
+  availableEndDate String? @map("available_end_date")
+  rowsImported Int @default(0) @map("rows_imported")
+  apiRequests Int @default(0) @map("api_requests")
+  attempts Int @default(0)
+  errorCode String? @map("error_code")
+  errorDetail String? @map("error_detail")
+  details Json @default("{}")
+  actorId String? @map("actor_id")
+  startedAt DateTime? @map("started_at")
+  finishedAt DateTime? @map("finished_at")
+  lastSyncedAt DateTime? @map("last_synced_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  binding ClientPropertyBinding @relation(fields:[bindingId], references:[id], onDelete:Cascade)
+  @@index([clientId,status])
+  @@map("gsc_sync_jobs")
+}
+// Totals exactly as returned by the API for dimension [date] (authoritative totals, includes anonymized queries).
+model GscDailyMetric {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  siteUrl String @map("site_url")
+  searchType String @map("search_type")
+  date String
+  clicks Int
+  impressions Int
+  ctr Float
+  position Float
+  syncedAt DateTime @default(now()) @map("synced_at")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  @@unique([clientId,siteUrl,searchType,date])
+  @@index([clientId,date])
+  @@map("gsc_daily_metrics")
+}
+// Detail rows for [date, X] where X is QUERY | PAGE | DEVICE | COUNTRY. Kept separate from totals because
+// query/page tables omit anonymized and long-tail rows, so they never sum to the daily totals.
+model GscDimensionMetric {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  siteUrl String @map("site_url")
+  searchType String @map("search_type")
+  dimension String
+  date String
+  key String
+  clicks Int
+  impressions Int
+  ctr Float
+  position Float
+  syncedAt DateTime @default(now()) @map("synced_at")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  @@unique([clientId,siteUrl,searchType,dimension,date,key])
+  @@index([clientId,dimension,date])
+  @@map("gsc_dimension_metrics")
+}
+// Human review of the automatic query classifier. The rule output stays auditable; this only records overrides.
+model GscQueryLabel {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  query String
+  category String
+  reviewedById String @map("reviewed_by_id")
+  note String?
+  updatedAt DateTime @updatedAt @map("updated_at")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  @@unique([clientId,query])
+  @@map("gsc_query_labels")
+}
+// Immutable report source. Never updated after creation; contentHash proves integrity.
+model ReportSnapshot {
+  id String @id @default(cuid())
+  clientId String @map("client_id")
+  reportType String @map("report_type")
+  language String
+  periodStart String @map("period_start")
+  periodEnd String @map("period_end")
+  sections Json
+  content Json
+  contentHash String @map("content_hash")
+  pdfPath String? @map("pdf_path")
+  pdfStatus String @default("PENDING") @map("pdf_status")
+  pdfError String? @map("pdf_error")
+  createdById String @map("created_by_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  client Client @relation(fields:[clientId], references:[id], onDelete:Cascade)
+  @@index([clientId,createdAt])
+  @@map("report_snapshots")
+}

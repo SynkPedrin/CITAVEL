@@ -1,0 +1,1 @@
+{"name":"citavel-client-engine","version":"1.0.0","private":true,"type":"module","engines":{"node":">=20.18"},"scripts":{"start":"node server.mjs","test":"node --test tests/*.test.mjs","run":"node scripts/run.mjs","create-client":"node scripts/create-client.mjs"},"dependencies":{"cheerio":"1.1.2","playwright-core":"^1.63.0"}}

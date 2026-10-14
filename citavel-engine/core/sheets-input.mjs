@@ -1,0 +1,18 @@
+import {loadState,saveState,withClientLock,upsert,stableId} from './store.mjs';
+import {SHEETS_SCHEMA,classifyLead} from './google.mjs';
+import {parseResponse} from './intelligence.mjs';
+const bool=v=>v===true||String(v).toLowerCase()==='true';
+const arr=v=>{if(Array.isArray(v))return v;try{const parsed=JSON.parse(v);if(Array.isArray(parsed))return parsed;}catch{}return typeof v==='string'?v.split(',').map(x=>x.trim()).filter(Boolean):[];};
+export async function importSheetRows(id,valueRanges){return withClientLock(id,async()=>{const s=await loadState(id);if(s.client.automation.google_sheets_enabled!==true)throw new Error('SHEETS_NOT_AUTHORIZED');if(!Array.isArray(valueRanges)||valueRanges.length>16)throw new Error('SHEETS_RANGES_INVALID');let imported=0;for(const range of valueRanges){const tab=String(range.range||'').split('!')[0].replace(/^'|'$/g,'');const schema=SHEETS_SCHEMA[tab];if(!schema||!['evidence','prompts','actions','leads','ai_runs'].includes(schema.key))continue;const [headers,...raw]=range.values||[];if(!headers)continue;const records=raw.slice(0,1000).map(values=>Object.fromEntries(headers.map((h,i)=>[h,values[i]??'']).filter(([h])=>schema.columns.includes(h))));const ts=new Date().toISOString();if(schema.key==='evidence'){for(const r of records){if(!r.claim&&!r.value)continue;let hasSource=false;try{const u=new URL(r.source_url);hasSource=['http:','https:'].includes(u.protocol);}catch{}r.evidence_id||=stableId('sheet-evidence',[id,r.claim,r.value,r.source_url]);Object.assign(r,{verified:hasSource&&bool(r.verified),public_allowed:hasSource&&bool(r.verified)&&bool(r.public_allowed),verification_status:hasSource?(bool(r.verified)?'VERIFIED_BY_OPERATOR':'SOURCE_PRESENT_UNVERIFIED'):'SOURCE_MISSING',updated_at:ts,created_at:r.created_at||ts});s.evidence=upsert(s.evidence,[r],'evidence_id',['created_at']);imported++;}}
+if(schema.key==='prompts'){for(const r of records){if(!r.prompt||!r.prompt_id||!s.prompts.some(p=>p.prompt_id===r.prompt_id))continue;const current=s.prompts.find(p=>p.prompt_id===r.prompt_id);current.active=bool(r.active);current.control_group=bool(r.control_group);imported++;}}
+if(schema.key==='actions'){for(const r of records){const current=s.actions.find(a=>a.action_id===r.action_id);if(!current)continue;const status=String(r.status||'').toUpperCase();if(['PROPOSED','APPROVED','IN_PROGRESS','DONE','REJECTED','CANCELLED'].includes(status))current.status=status;current.owner=String(r.owner||'').slice(0,160)||null;if(status==='DONE')current.completed_at=r.completed_at||ts;imported++;}}
+if(schema.key==='leads'){for(const r of records){if(!r.lead_id)continue;for(const field of ['opportunity_value','closed_value'])r[field]=r[field]!==''&&Number.isFinite(Number(r[field]))?Number(r[field]):null;r.attribution_class=classifyLead(r);s.leads=upsert(s.leads,[r],'lead_id');imported++;}}
+if(schema.key==='ai_runs'){for(const r of records){
+if(r.run_type!=='GOLDEN'||!['ChatGPT','Gemini','Perplexity','Google AI Mode','Copilot'].includes(r.platform)||!s.prompts.some(p=>p.prompt_id===r.prompt_id)||!r.response||!Number.isFinite(Date.parse(r.timestamp)))continue;
+const runId=r.run_id||stableId('golden',[id,r.platform,r.prompt_id,r.timestamp,r.response]);
+// A spreadsheet edit must never relabel an existing LAB observation as GOLDEN.
+// Apply this to generated IDs too, and fail closed for legacy unknown run types.
+if(s.ai_runs.some(run=>run.run_id===runId&&run.run_type!=='GOLDEN'))continue;
+const run=parseResponse({...r,citations:arr(r.citations),run_id:runId,capture_method:'MANUAL_SHEETS'},s.client,s.prompts);s.ai_runs=upsert(s.ai_runs,[run],'run_id');imported++;
+}}
+}await saveState(id,s);return {client_id:id,imported};});}

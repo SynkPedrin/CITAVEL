@@ -1,0 +1,13 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {weeklyWindow,weeklyDue,spWeekKey,weeklyDecision} from '../core/scheduler.mjs';
+test('weekly job window follows Sao Paulo Monday 9am, not UTC',()=>{assert.equal(weeklyWindow(new Date('2026-10-05T12:00:00Z')),true);assert.equal(weeklyWindow(new Date('2026-10-05T09:00:00Z')),false);assert.equal(weeklyWindow(new Date('2026-10-06T12:00:00Z')),false);});
+test('ciclo semanal é devido de segunda 09h (SP) até domingo: recupera semana perdida',()=>{assert.equal(weeklyDue(new Date('2026-10-12T11:59:00Z')),false);assert.equal(weeklyDue(new Date('2026-10-12T12:00:00Z')),true);assert.equal(weeklyDue(new Date('2026-10-13T15:00:00Z')),true);assert.equal(weeklyDue(new Date('2026-10-19T02:00:00Z')),true);});
+test('chave da semana usa o calendário de São Paulo (domingo à noite não antecipa a semana seguinte)',()=>{assert.equal(spWeekKey(new Date('2026-10-13T15:00:00Z')),'2026-10-12');assert.equal(spWeekKey(new Date('2026-10-19T02:00:00Z')),'2026-10-12');assert.equal(spWeekKey(new Date('2026-10-19T12:00:00Z')),'2026-10-19');});
+test('decisão: roda semana pendente, não repete, re-tenta erro e destrava RUNNING antigo',()=>{const now=new Date('2026-10-13T15:00:00Z'),b='2026-10-12';
+ assert.deepEqual(weeklyDecision({scheduler:{last_week:'2026-10-05',status:'READY'},ai_runs:[]},b,now).run,true);
+ assert.equal(weeklyDecision({scheduler:{last_week:b,status:'READY'}},b,now).run,false);
+ assert.equal(weeklyDecision({scheduler:{last_week:b,status:'ERROR',attempts:1,finished_at:'2026-10-13T12:00:00Z'}},b,now).run,true);
+ assert.equal(weeklyDecision({scheduler:{last_week:b,status:'ERROR',attempts:3,finished_at:'2026-10-13T12:00:00Z'}},b,now).run,false);
+ assert.equal(weeklyDecision({scheduler:{last_week:b,status:'RUNNING',started_at:'2026-10-13T10:00:00Z'}},b,now).run,true);
+ assert.equal(weeklyDecision({scheduler:{last_week:b,status:'RUNNING',started_at:'2026-10-13T14:30:00Z'}},b,now).run,false);
+ assert.equal(weeklyDecision({ai_runs:[{batch_id:'baseline-v1',timestamp:'2026-10-13T10:00:00Z'}]},b,now).reason,'COVERED_BY_BASELINE');
+ assert.equal(weeklyDecision({ai_runs:[{batch_id:'baseline-v1',timestamp:'2026-10-06T10:00:00Z'}]},b,now).reason,'FIRST_WEEKLY');});

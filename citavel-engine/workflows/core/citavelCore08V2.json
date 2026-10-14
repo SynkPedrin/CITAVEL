@@ -1,0 +1,75 @@
+{
+  "id": "citavelCore08V2",
+  "name": "CITAVEL CORE — 08 PUBLISH",
+  "nodes": [
+    {
+      "id": "executar",
+      "name": "Executar",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "entrada_core",
+      "name": "Entrada CORE",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        200
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "publicacao_exige_aprovacao_humana_no_manager",
+      "name": "Publicacao exige aprovacao humana no Manager",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        250,
+        0
+      ],
+      "parameters": {}
+    }
+  ],
+  "connections": {
+    "Executar": {
+      "main": [
+        [
+          {
+            "node": "Publicacao exige aprovacao humana no Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrada CORE": {
+      "main": [
+        [
+          {
+            "node": "Publicacao exige aprovacao humana no Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true,
+    "executionTimeout": 1800
+  },
+  "pinData": {},
+  "tags": []
+}

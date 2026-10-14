@@ -1,0 +1,45 @@
+{
+  "name": "citavel-manager",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "dev": "next dev --webpack --hostname 127.0.0.1 --port 3002",
+    "build": "prisma generate && next build --webpack",
+    "start": "next start --hostname 127.0.0.1 --port 3002",
+    "test": "node --env-file=.env.local --import tsx/esm --test tests/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "db:up": "docker compose --env-file .env.local up -d db",
+    "db:down": "docker compose --env-file .env.local stop db",
+    "db:migrate": "dotenv -e .env.local -- prisma db push --skip-generate",
+    "seed": "tsx --env-file=.env.local scripts/seed.ts",
+    "sync:cosentino": "tsx --env-file=.env.local scripts/sync.ts cosentino",
+    "health": "tsx --env-file=.env.local scripts/health.ts",
+    "setup": "node scripts/setup.mjs"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19.0",
+    "bcryptjs": "3.0.3",
+    "lucide-react": "0.468.0",
+    "next": "16.3.8",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "recharts": "3.2.1",
+    "server-only": "^0.0.1",
+    "zod": "4.1.12"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.1.14",
+    "@types/node": "24.7.2",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "dotenv-cli": "10.0.0",
+    "prisma": "6.19.0",
+    "tailwindcss": "4.1.14",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3"
+  }
+}

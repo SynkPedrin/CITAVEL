@@ -1,0 +1,1920 @@
+[
+  {
+    "id": "citavelCore01V2",
+    "name": "CITAVEL CORE — 01 DISCOVER",
+    "nodes": [
+      {
+        "id": "executar",
+        "name": "Executar",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "entrada_core",
+        "name": "Entrada CORE",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          200
+        ],
+        "parameters": {
+          "inputSource": "passthrough"
+        }
+      },
+      {
+        "id": "01_discover",
+        "name": "01 DISCOVER",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          250,
+          0
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "http://citavel-engine:8787/v1/run",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({client_id:$json.client_id || 'cosentino',mode:$json.mode || 'ONBOARDING',batch_id:$json.batch_id,errors:$json.errors || [],stage:'DISCOVER'}) }}",
+          "options": {
+            "timeout": 1200000
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Executar": {
+        "main": [
+          [
+            {
+              "node": "01 DISCOVER",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Entrada CORE": {
+        "main": [
+          [
+            {
+              "node": "01 DISCOVER",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "callerPolicy": "workflowsFromSameOwner",
+      "executionOrder": "v1",
+      "timezone": "America/Sao_Paulo",
+      "saveManualExecutions": true,
+      "executionTimeout": 1800
+    },
+    "pinData": {},
+    "tags": []
+  },
+  {
+    "id": "citavelCore02V2",
+    "name": "CITAVEL CORE — 02 CRAWL",
+    "nodes": [
+      {
+        "id": "executar",
+        "name": "Executar",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "entrada_core",
+        "name": "Entrada CORE",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          200
+        ],
+        "parameters": {
+          "inputSource": "passthrough"
+        }
+      },
+      {
+        "id": "02_crawl",
+        "name": "02 CRAWL",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          250,
+          0
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "http://citavel-engine:8787/v1/run",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({client_id:$json.client_id || 'cosentino',mode:$json.mode || 'ONBOARDING',batch_id:$json.batch_id,errors:$json.errors || [],stage:'INGEST'}) }}",
+          "options": {
+            "timeout": 1200000
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Executar": {
+        "main": [
+          [
+            {
+              "node": "02 CRAWL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Entrada CORE": {
+        "main": [
+          [
+            {
+              "node": "02 CRAWL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "callerPolicy": "workflowsFromSameOwner",
+      "executionOrder": "v1",
+      "timezone": "America/Sao_Paulo",
+      "saveManualExecutions": true,
+      "executionTimeout": 1800
+    },
+    "pinData": {},
+    "tags": []
+  },
+  {
+    "id": "citavelCore03V2",
+    "name": "CITAVEL CORE — 03 AUDIT",
+    "nodes": [
+      {
+        "id": "executar",
+        "name": "Executar",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "entrada_core",
+        "name": "Entrada CORE",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          200
+        ],
+        "parameters": {
+          "inputSource": "passthrough"
+        }
+      },
+      {
+        "id": "03_audit",
+        "name": "03 AUDIT",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          250,
+          0
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "http://citavel-engine:8787/v1/run",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({client_id:$json.client_id || 'cosentino',mode:$json.mode || 'ONBOARDING',batch_id:$json.batch_id,errors:$json.errors || [],stage:'AUDIT'}) }}",
+          "options": {
+            "timeout": 1200000
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Executar": {
+        "main": [
+          [
+            {
+              "node": "03 AUDIT",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Entrada CORE": {
+        "main": [
+          [
+            {
+              "node": "03 AUDIT",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "callerPolicy": "workflowsFromSameOwner",
+      "executionOrder": "v1",
+      "timezone": "America/Sao_Paulo",
+      "saveManualExecutions": true,
+      "executionTimeout": 1800
+    },
+    "pinData": {},
+    "tags": []
+  },
+  {
+    "id": "citavelCore04V2",
+    "name": "CITAVEL CORE — 04 DEMAND",
+    "nodes": [
+      {
+        "id": "executar",
+        "name": "Executar",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "entrada_core",
+        "name": "Entrada CORE",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          200
+        ],
+        "parameters": {
+          "inputSource": "passthrough"
+        }
+      },
+      {
+        "id": "04_demand",
+        "name": "04 DEMAND",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          250,
+          0
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "http://citavel-engine:8787/v1/run",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({client_id:$json.client_id || 'cosentino',mode:$json.mode || 'ONBOARDING',batch_id:$json.batch_id,errors:$json.errors || [],stage:'DEMAND'}) }}",
+          "options": {
+            "timeout": 1200000
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Executar": {
+        "main": [
+          [
+            {
+              "node": "04 DEMAND",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Entrada CORE": {
+        "main": [
+          [
+            {
+              "node": "04 DEMAND",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "callerPolicy": "workflowsFromSameOwner",
+      "executionOrder": "v1",
+      "timezone": "America/Sao_Paulo",
+      "saveManualExecutions": true,
+      "executionTimeout": 1800
+    },
+    "pinData": {},
+    "tags": []
+  },
+  {
+    "id": "citavelCore05V2",
+    "name": "CITAVEL CORE — 05 INTELLIGENCE",
+    "nodes": [
+      {
+        "id": "executar",
+        "name": "Executar",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "entrada_core",
+        "name": "Entrada CORE",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          200
+        ],
+        "parameters": {
+          "inputSource": "passthrough"
+        }
+      },
+      {
+        "id": "05_intelligence",
+        "name": "05 INTELLIGENCE",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          250,
+          0
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "http://citavel-engine:8787/v1/run",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({client_id:$json.client_id || 'cosentino',mode:$json.mode || 'ONBOARDING',batch_id:$json.batch_id,errors:$json.errors || [],stage:'INTELLIGENCE'}) }}",
+          "options": {
+            "timeout": 1200000
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Executar": {
+        "main": [
+          [
+            {
+              "node": "05 INTELLIGENCE",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Entrada CORE": {
+        "main": [
+          [
+            {
+              "node": "05 INTELLIGENCE",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "callerPolicy": "workflowsFromSameOwner",
+      "executionOrder": "v1",
+      "timezone": "America/Sao_Paulo",
+      "saveManualExecutions": true,
+      "executionTimeout": 1800
+    },
+    "pinData": {},
+    "tags": []
+  },
+  {
+    "id": "citavelCore06V2",
+    "name": "CITAVEL CORE — 06 ACTIONS",
+    "nodes": [
+      {
+        "id": "executar",
+        "name": "Executar",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "entrada_core",
+        "name": "Entrada CORE",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          200
+        ],
+        "parameters": {
+          "inputSource": "passthrough"
+        }
+      },
+      {
+        "id": "06_actions",
+        "name": "06 ACTIONS",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          250,
+          0
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "http://citavel-engine:8787/v1/run",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({client_id:$json.client_id || 'cosentino',mode:$json.mode || 'ONBOARDING',batch_id:$json.batch_id,errors:$json.errors || [],stage:'ACTION'}) }}",
+          "options": {
+            "timeout": 1200000
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Executar": {
+        "main": [
+          [
+            {
+              "node": "06 ACTIONS",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Entrada CORE": {
+        "main": [
+          [
+            {
+              "node": "06 ACTIONS",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "callerPolicy": "workflowsFromSameOwner",
+      "executionOrder": "v1",
+      "timezone": "America/Sao_Paulo",
+      "saveManualExecutions": true,
+      "executionTimeout": 1800
+    },
+    "pinData": {},
+    "tags": []
+  },
+  {
+    "id": "citavelCore07V2",
+    "name": "CITAVEL CORE — 07 CONTENT",
+    "nodes": [
+      {
+        "id": "executar",
+        "name": "Executar",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "entrada_core",
+        "name": "Entrada CORE",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          200
+        ],
+        "parameters": {
+          "inputSource": "passthrough"
+        }
+      },
+      {
+        "id": "07_content",
+        "name": "07 CONTENT",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          250,
+          0
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "http://citavel-engine:8787/v1/run",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({client_id:$json.client_id || 'cosentino',mode:$json.mode || 'ONBOARDING',batch_id:$json.batch_id,errors:$json.errors || [],stage:'CONTENT'}) }}",
+          "options": {
+            "timeout": 1200000
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Executar": {
+        "main": [
+          [
+            {
+              "node": "07 CONTENT",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Entrada CORE": {
+        "main": [
+          [
+            {
+              "node": "07 CONTENT",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "callerPolicy": "workflowsFromSameOwner",
+      "executionOrder": "v1",
+      "timezone": "America/Sao_Paulo",
+      "saveManualExecutions": true,
+      "executionTimeout": 1800
+    },
+    "pinData": {},
+    "tags": []
+  },
+  {
+    "id": "citavelCore09V2",
+    "name": "CITAVEL CORE — 09 MONITOR",
+    "nodes": [
+      {
+        "id": "executar",
+        "name": "Executar",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "entrada_core",
+        "name": "Entrada CORE",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          200
+        ],
+        "parameters": {
+          "inputSource": "passthrough"
+        }
+      },
+      {
+        "id": "09_monitor",
+        "name": "09 MONITOR",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          250,
+          0
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "http://citavel-engine:8787/v1/run",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({client_id:$json.client_id || 'cosentino',mode:$json.mode || 'ONBOARDING',batch_id:$json.batch_id,errors:$json.errors || [],stage:'MONITOR'}) }}",
+          "options": {
+            "timeout": 1200000
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Executar": {
+        "main": [
+          [
+            {
+              "node": "09 MONITOR",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Entrada CORE": {
+        "main": [
+          [
+            {
+              "node": "09 MONITOR",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "callerPolicy": "workflowsFromSameOwner",
+      "executionOrder": "v1",
+      "timezone": "America/Sao_Paulo",
+      "saveManualExecutions": true,
+      "executionTimeout": 1800
+    },
+    "pinData": {},
+    "tags": []
+  },
+  {
+    "id": "citavelCore10V2",
+    "name": "CITAVEL CORE — 10 REPORT",
+    "nodes": [
+      {
+        "id": "executar",
+        "name": "Executar",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "entrada_core",
+        "name": "Entrada CORE",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          200
+        ],
+        "parameters": {
+          "inputSource": "passthrough"
+        }
+      },
+      {
+        "id": "10_report",
+        "name": "10 REPORT",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          250,
+          0
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "http://citavel-engine:8787/v1/run",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({client_id:$json.client_id || 'cosentino',mode:$json.mode || 'ONBOARDING',batch_id:$json.batch_id,errors:$json.errors || [],stage:'REPORT'}) }}",
+          "options": {
+            "timeout": 1200000
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Executar": {
+        "main": [
+          [
+            {
+              "node": "10 REPORT",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Entrada CORE": {
+        "main": [
+          [
+            {
+              "node": "10 REPORT",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "callerPolicy": "workflowsFromSameOwner",
+      "executionOrder": "v1",
+      "timezone": "America/Sao_Paulo",
+      "saveManualExecutions": true,
+      "executionTimeout": 1800
+    },
+    "pinData": {},
+    "tags": []
+  },
+  {
+    "id": "citavelCore08V2",
+    "name": "CITAVEL CORE — 08 PUBLISH",
+    "nodes": [
+      {
+        "id": "executar",
+        "name": "Executar",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "entrada_core",
+        "name": "Entrada CORE",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          200
+        ],
+        "parameters": {
+          "inputSource": "passthrough"
+        }
+      },
+      {
+        "id": "publicacao_exige_aprovacao_humana_no_manager",
+        "name": "Publicacao exige aprovacao humana no Manager",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          250,
+          0
+        ],
+        "parameters": {}
+      }
+    ],
+    "connections": {
+      "Executar": {
+        "main": [
+          [
+            {
+              "node": "Publicacao exige aprovacao humana no Manager",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Entrada CORE": {
+        "main": [
+          [
+            {
+              "node": "Publicacao exige aprovacao humana no Manager",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "callerPolicy": "workflowsFromSameOwner",
+      "executionOrder": "v1",
+      "timezone": "America/Sao_Paulo",
+      "saveManualExecutions": true,
+      "executionTimeout": 1800
+    },
+    "pinData": {},
+    "tags": []
+  },
+  {
+    "id": "citavelCore00V2",
+    "name": "CITAVEL CORE — 00 MASTER",
+    "nodes": [
+      {
+        "id": "executar",
+        "name": "Executar",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "entrada_core",
+        "name": "Entrada CORE",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          200
+        ],
+        "parameters": {
+          "inputSource": "passthrough"
+        }
+      },
+      {
+        "id": "validar_cliente",
+        "name": "Validar cliente",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          250,
+          0
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "http://citavel-engine:8787/v1/run",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({client_id:$json.client_id || 'cosentino',mode:$json.mode || 'ONBOARDING',batch_id:$json.batch_id,errors:$json.errors || [],stage:'CONFIG'}) }}",
+          "options": {
+            "timeout": 1200000
+          }
+        }
+      },
+      {
+        "id": "discover",
+        "name": "DISCOVER",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          500,
+          0
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "value": "citavelCore01V2",
+            "mode": "id"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      },
+      {
+        "id": "crawl",
+        "name": "CRAWL",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          730,
+          0
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "value": "citavelCore02V2",
+            "mode": "id"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      },
+      {
+        "id": "audit",
+        "name": "AUDIT",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          960,
+          0
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "value": "citavelCore03V2",
+            "mode": "id"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      },
+      {
+        "id": "demand",
+        "name": "DEMAND",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          1190,
+          0
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "value": "citavelCore04V2",
+            "mode": "id"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      },
+      {
+        "id": "intel",
+        "name": "INTEL",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          1420,
+          0
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "value": "citavelCore05V2",
+            "mode": "id"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      },
+      {
+        "id": "actions",
+        "name": "ACTIONS",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          1650,
+          0
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "value": "citavelCore06V2",
+            "mode": "id"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      },
+      {
+        "id": "content",
+        "name": "CONTENT",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          1880,
+          0
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "value": "citavelCore07V2",
+            "mode": "id"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      },
+      {
+        "id": "publish",
+        "name": "PUBLISH",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          2110,
+          0
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "value": "citavelCore08V2",
+            "mode": "id"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      },
+      {
+        "id": "monitor",
+        "name": "MONITOR",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          2340,
+          0
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "value": "citavelCore09V2",
+            "mode": "id"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      },
+      {
+        "id": "report",
+        "name": "REPORT",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          2570,
+          0
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "value": "citavelCore10V2",
+            "mode": "id"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      },
+      {
+        "id": "sheets",
+        "name": "SHEETS",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          2500,
+          0
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "value": "citavelCore11V2",
+            "mode": "id"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "resumo_final",
+        "name": "Resumo final",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          2750,
+          0
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "http://citavel-engine:8787/v1/run",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({client_id:$('Validar cliente').first().json.client_id,mode:$('Validar cliente').first().json.mode,stage:'CONFIG'}) }}",
+          "options": {
+            "timeout": 1200000
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Executar": {
+        "main": [
+          [
+            {
+              "node": "Validar cliente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Entrada CORE": {
+        "main": [
+          [
+            {
+              "node": "Validar cliente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Validar cliente": {
+        "main": [
+          [
+            {
+              "node": "DISCOVER",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "DISCOVER": {
+        "main": [
+          [
+            {
+              "node": "CRAWL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "CRAWL": {
+        "main": [
+          [
+            {
+              "node": "AUDIT",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AUDIT": {
+        "main": [
+          [
+            {
+              "node": "DEMAND",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "DEMAND": {
+        "main": [
+          [
+            {
+              "node": "INTEL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "INTEL": {
+        "main": [
+          [
+            {
+              "node": "ACTIONS",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ACTIONS": {
+        "main": [
+          [
+            {
+              "node": "CONTENT",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "CONTENT": {
+        "main": [
+          [
+            {
+              "node": "PUBLISH",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "PUBLISH": {
+        "main": [
+          [
+            {
+              "node": "MONITOR",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MONITOR": {
+        "main": [
+          [
+            {
+              "node": "REPORT",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "REPORT": {
+        "main": [
+          [
+            {
+              "node": "SHEETS",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "SHEETS": {
+        "main": [
+          [
+            {
+              "node": "Resumo final",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "callerPolicy": "workflowsFromSameOwner",
+      "executionOrder": "v1",
+      "timezone": "America/Sao_Paulo",
+      "saveManualExecutions": true,
+      "executionTimeout": 1800
+    },
+    "pinData": {},
+    "tags": []
+  },
+  {
+    "id": "citavelCosentV1",
+    "name": "CITAVEL CLIENT — COSENTINO",
+    "nodes": [
+      {
+        "id": "executar",
+        "name": "Executar",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "client_config",
+        "name": "CLIENT CONFIG",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 2,
+        "position": [
+          250,
+          0
+        ],
+        "parameters": {
+          "values": {
+            "string": [
+              {
+                "name": "client_id",
+                "value": "cosentino"
+              },
+              {
+                "name": "mode",
+                "value": "ONBOARDING"
+              }
+            ]
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "master",
+        "name": "MASTER",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          500,
+          0
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "value": "citavelCore00V2",
+            "mode": "id"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Executar": {
+        "main": [
+          [
+            {
+              "node": "CLIENT CONFIG",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "CLIENT CONFIG": {
+        "main": [
+          [
+            {
+              "node": "MASTER",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "callerPolicy": "workflowsFromSameOwner",
+      "executionOrder": "v1",
+      "timezone": "America/Sao_Paulo",
+      "saveManualExecutions": true,
+      "executionTimeout": 1800
+    },
+    "pinData": {},
+    "tags": []
+  },
+  {
+    "id": "citavelTempltV1",
+    "name": "CITAVEL CLIENT TEMPLATE",
+    "nodes": [
+      {
+        "id": "executar",
+        "name": "Executar",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "client_config",
+        "name": "CLIENT CONFIG",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 2,
+        "position": [
+          250,
+          0
+        ],
+        "parameters": {
+          "values": {
+            "string": [
+              {
+                "name": "client_id",
+                "value": "CLIENT_ID"
+              },
+              {
+                "name": "mode",
+                "value": "ONBOARDING"
+              }
+            ]
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "master",
+        "name": "MASTER",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          500,
+          0
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "value": "citavelCore00V2",
+            "mode": "id"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Executar": {
+        "main": [
+          [
+            {
+              "node": "CLIENT CONFIG",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "CLIENT CONFIG": {
+        "main": [
+          [
+            {
+              "node": "MASTER",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "callerPolicy": "workflowsFromSameOwner",
+      "executionOrder": "v1",
+      "timezone": "America/Sao_Paulo",
+      "saveManualExecutions": true,
+      "executionTimeout": 1800
+    },
+    "pinData": {},
+    "tags": []
+  },
+  {
+    "id": "citavelCore11V2",
+    "name": "CITAVEL CORE — 11 SHEETS",
+    "nodes": [
+      {
+        "id": "executar",
+        "name": "Executar",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "entrada_core",
+        "name": "Entrada CORE",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          200
+        ],
+        "parameters": {
+          "inputSource": "passthrough"
+        }
+      },
+      {
+        "id": "payload",
+        "name": "Payload",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          250,
+          0
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "=http://citavel-engine:8787/v1/sheets/{{ $json.client_id || 'cosentino' }}/payload",
+          "options": {
+            "timeout": 1200000
+          }
+        }
+      },
+      {
+        "id": "autorizacao_sheets",
+        "name": "Autorizacao Sheets",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [
+          400,
+          0
+        ],
+        "parameters": {
+          "conditions": {
+            "boolean": [
+              {
+                "value1": "={{ $json.authorized }}",
+                "value2": true
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "sheets_aguardando_autorizacao",
+        "name": "Sheets aguardando autorizacao",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          700,
+          -220
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "planilha_existe",
+        "name": "Planilha existe",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [
+          500,
+          0
+        ],
+        "parameters": {
+          "conditions": {
+            "string": [
+              {
+                "value1": "={{ $json.spreadsheet_id || \"\" }}",
+                "operation": "isNotEmpty"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "criar_planilha",
+        "name": "Criar planilha",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          750,
+          220
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "https://sheets.googleapis.com/v4/spreadsheets",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($('Payload').first().json.create_body) }}",
+          "options": {
+            "timeout": 1200000
+          },
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleSheetsOAuth2Api"
+        },
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "qgVeaBRqX7i7UNpM",
+            "name": "Google Sheets - Clinica VET"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1500
+      },
+      {
+        "id": "vincular_planilha",
+        "name": "Vincular planilha",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          1000,
+          220
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "=http://citavel-engine:8787/v1/sheets/{{ $('Payload').first().json.client_id }}/linked",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({spreadsheetId:$json.spreadsheetId}) }}",
+          "options": {
+            "timeout": 1200000
+          }
+        }
+      },
+      {
+        "id": "ler_campos_de_controle",
+        "name": "Ler campos de controle",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          750,
+          -100
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $json.spreadsheet_id }}/values:batchGet?ranges=01_EVIDENCE&ranges=03_PROMPTS&ranges=04_AI_RUNS&ranges=08_ACTIONS&ranges=13_LEADS",
+          "options": {
+            "timeout": 1200000
+          },
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleSheetsOAuth2Api"
+        },
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "qgVeaBRqX7i7UNpM",
+            "name": "Google Sheets - Clinica VET"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1500
+      },
+      {
+        "id": "importar_revisoes",
+        "name": "Importar revisoes",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          960,
+          -100
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "=http://citavel-engine:8787/v1/sheets/{{ $('Payload').first().json.client_id }}/import",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({valueRanges:$json.valueRanges}) }}",
+          "options": {
+            "timeout": 1200000
+          }
+        }
+      },
+      {
+        "id": "atualizar_payload",
+        "name": "Atualizar payload",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          1130,
+          -100
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "=http://citavel-engine:8787/v1/sheets/{{ $('Payload').first().json.client_id }}/payload",
+          "options": {
+            "timeout": 1200000
+          }
+        }
+      },
+      {
+        "id": "gravar_16_abas",
+        "name": "Gravar 16 abas",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          1300,
+          0
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $json.spreadsheet_id }}/values:batchUpdate",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.batch_body) }}",
+          "options": {
+            "timeout": 1200000
+          },
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleSheetsOAuth2Api"
+        },
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "qgVeaBRqX7i7UNpM",
+            "name": "Google Sheets - Clinica VET"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1500
+      },
+      {
+        "id": "registrar_sincronizacao",
+        "name": "Registrar sincronizacao",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          1550,
+          0
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "=http://citavel-engine:8787/v1/sheets/{{ $('Payload').first().json.client_id }}/status",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({status:'READY'}) }}",
+          "options": {
+            "timeout": 1200000
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Executar": {
+        "main": [
+          [
+            {
+              "node": "Payload",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Entrada CORE": {
+        "main": [
+          [
+            {
+              "node": "Payload",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Payload": {
+        "main": [
+          [
+            {
+              "node": "Autorizacao Sheets",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Autorizacao Sheets": {
+        "main": [
+          [
+            {
+              "node": "Planilha existe",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Sheets aguardando autorizacao",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Planilha existe": {
+        "main": [
+          [
+            {
+              "node": "Ler campos de controle",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Criar planilha",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ler campos de controle": {
+        "main": [
+          [
+            {
+              "node": "Importar revisoes",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Importar revisoes": {
+        "main": [
+          [
+            {
+              "node": "Atualizar payload",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Atualizar payload": {
+        "main": [
+          [
+            {
+              "node": "Gravar 16 abas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Criar planilha": {
+        "main": [
+          [
+            {
+              "node": "Vincular planilha",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Vincular planilha": {
+        "main": [
+          [
+            {
+              "node": "Gravar 16 abas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Gravar 16 abas": {
+        "main": [
+          [
+            {
+              "node": "Registrar sincronizacao",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "callerPolicy": "workflowsFromSameOwner",
+      "executionOrder": "v1",
+      "timezone": "America/Sao_Paulo",
+      "saveManualExecutions": true,
+      "executionTimeout": 1800
+    },
+    "pinData": {},
+    "tags": []
+  }
+]

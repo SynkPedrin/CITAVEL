@@ -1,0 +1,84 @@
+{
+  "id": "citavelCore05V2",
+  "name": "CITAVEL CORE — 05 INTELLIGENCE",
+  "nodes": [
+    {
+      "id": "executar",
+      "name": "Executar",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "entrada_core",
+      "name": "Entrada CORE",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        200
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "05_intelligence",
+      "name": "05 INTELLIGENCE",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        250,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://citavel-engine:8787/v1/run",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({client_id:$json.client_id || 'cosentino',mode:$json.mode || 'ONBOARDING',batch_id:$json.batch_id,errors:$json.errors || [],stage:'INTELLIGENCE'}) }}",
+        "options": {
+          "timeout": 1200000
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Executar": {
+      "main": [
+        [
+          {
+            "node": "05 INTELLIGENCE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrada CORE": {
+      "main": [
+        [
+          {
+            "node": "05 INTELLIGENCE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true,
+    "executionTimeout": 1800
+  },
+  "pinData": {},
+  "tags": []
+}

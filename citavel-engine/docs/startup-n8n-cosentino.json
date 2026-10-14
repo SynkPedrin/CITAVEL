@@ -1,0 +1,9 @@
+Error tracking disabled because this release is older than 6 weeks.
+Failed to load Custom API options for the node "n8n-nodes-base.confluence": Unknown credential name "confluenceCloudOAuth2Api"
+n8n Task Broker ready on 127.0.0.1, port 5689
+Failed to start Python task runner in internal mode. because Python 3 is missing from this system. Launching a Python runner in internal mode is intended only for debugging and is not recommended for production. Users are encouraged to deploy in external mode. See: https://docs.n8n.io/hosting/configuration/task-runners/#setting-up-external-mode
+[license SDK] cert state: expiresAt=2026-10-18T23:12:48.143Z terminatesAt=2051-09-11T22:57:06.786Z issuedAt=2026-10-08T23:12:48.429Z msToExpiry=471301416 msToTermination=786191960059 isValid=true isRenewalDue=false detachedEntitlementsCount=0 entitlements=1 enabledFeatures=6
+[license SDK] Skipping renewal on init: renewOnInit is disabled in config
+[license SDK] Skipping renewal on init: autoRenewEnabled is disabled in config
+[license SDK] Skipping renewal on init: license cert is not due for renewal
+Registered runner "JS Task Runner" (CyCfICkfs8Y2jjC0WPBau) 
