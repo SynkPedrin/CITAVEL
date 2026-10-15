@@ -13,7 +13,7 @@ export type Classification = {
 
 export const normalize = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
 
-const COMMERCIAL = ['preco', 'precos', 'valor', 'valores', 'quanto custa', 'custo', 'agendar', 'agendamento', 'marcar', 'orcamento', 'convenio', 'convenios', 'plano de saude', 'particular', 'perto de mim', 'proximo', 'melhor', 'melhores', 'comprar', 'contratar', 'onde fazer', 'onde', 'clinica', 'laboratorio', 'telefone', 'whatsapp', 'endereco', 'horario', 'resultado', 'resultados'];
+const COMMERCIAL = ['preco', 'precos', 'valor', 'valores', 'quanto custa', 'custo', 'agendar', 'agendamento', 'marcar', 'orcamento', 'convenio', 'convenios', 'plano de saude', 'particular', 'perto de mim', 'proximo', 'melhor', 'melhores', 'comprar', 'contratar', 'onde fazer', 'clinica', 'laboratorio', 'telefone', 'whatsapp', 'endereco', 'horario'];
 const INFORMATIONAL = ['o que e', 'o que', 'como', 'por que', 'porque', 'para que serve', 'quando', 'qual', 'quais', 'significado', 'sintomas', 'preparo', 'precisa', 'pode', 'doi', 'demora', 'quanto tempo', 'diferenca', 'riscos', 'tipos'];
 
 const hasPhrase = (q: string, phrase: string) => phrase.length > 0 && ` ${q} `.includes(` ${phrase} `);
@@ -28,7 +28,9 @@ export function defaultBrandTerms(brandName: string, domain: string, extra: stri
 
 export function classifyQuery(query: string, terms: ClassifierTerms, label?: { category: string } | null): Classification {
   const q = normalize(query);
-  const brand = clean(terms.brand).filter(t => hasPhrase(q, t));
+  // Brand also matches when glued to the next word ("dcsbirigui"): a token must START with the compact brand (≥3 chars).
+  const tokens = q.split(' ');
+  const brand = clean(terms.brand).filter(t => hasPhrase(q, t) || (t.replace(/ /g, '').length >= 3 && tokens.some(tok => tok.startsWith(t.replace(/ /g, '')) && tok.length > t.replace(/ /g, '').length)));
   const services = clean(terms.services).filter(t => hasPhrase(q, t));
   const locations = clean(terms.locations).filter(t => hasPhrase(q, t));
   const commercial = COMMERCIAL.filter(t => hasPhrase(q, t));

@@ -1,0 +1,1 @@
+export default function Loading() { return <div className="section-stack" aria-busy="true" aria-label="Carregando"><div className="skeleton" style={{ height: 44 }} /><div className="skeleton" style={{ height: 120 }} /><div className="skeleton" style={{ height: 240 }} /></div>; }

@@ -6,3 +6,6 @@ node_modules/
 .runtime/
 *.log
 *.tsbuildinfo
+.current_release
+deploy/backups/
+deploy/.env.production

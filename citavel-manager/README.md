@@ -45,6 +45,10 @@ Administradores podem criar usuários pela API administrativa. A senha temporár
 
 Use Administração, Clientes, Novo cliente. O wizard grava os dados, registra eventos de provisionamento e inicia a sincronização.
 
+## Google Search Console
+
+Central de Integrações (Configurações → Integrações), vínculo propriedade → cliente, sincronização diária via n8n, dashboard Google / SEO e relatórios PDF: veja docs/GOOGLE_INTEGRATION.md.
+
 ## Testing
 
 Use npm run typecheck, npm run build e npm test. Os 47 testes do Engine continuam no projeto original.

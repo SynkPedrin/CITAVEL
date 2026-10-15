@@ -18,6 +18,8 @@ export const settingUpdateSchema = z.object({ group: z.enum(['ENGINE','N8N','OLL
     if (!fields.some(f => f.key === key)) ctx.addIssue({ code: 'custom', message: 'Campo de configuração não permitido.', path: ['values',key] });
     else if (value && key.endsWith('_URL') && !localServiceUrl.safeParse(value).success) ctx.addIssue({ code: 'custom', message: 'Use um endereço local válido.', path: ['values',key] });
     else if (/[\r\n\0]/.test(value)) ctx.addIssue({ code: 'custom', message: 'Valor inválido.', path: ['values',key] });
+    else if (value && key === 'GOOGLE_CLIENT_ID' && !/^[0-9]+-[a-z0-9]+\.apps\.googleusercontent\.com$/.test(value.trim())) ctx.addIssue({ code: 'custom', message: 'O ID do cliente OAuth deve terminar em .apps.googleusercontent.com.', path: ['values',key] });
+    else if (value && key === 'GOOGLE_CLIENT_SECRET' && !/^GOCSPX-[A-Za-z0-9_-]{20,}$/.test(value.trim())) ctx.addIssue({ code: 'custom', message: 'O segredo do cliente OAuth deve começar com GOCSPX-.', path: ['values',key] });
   }
 });
 export const googleProviderSchema = z.enum(['GA4','SEARCH_CONSOLE','GOOGLE_SHEETS','GTM']);

@@ -8,7 +8,17 @@ export const googleScopes: Record<GoogleProvider,string> = {
   GOOGLE_SHEETS:'https://www.googleapis.com/auth/spreadsheets.readonly',
   GTM:'https://www.googleapis.com/auth/tagmanager.readonly',
 };
-export const googleCallback = () => `${new URL(process.env.APP_URL || 'http://localhost:3002').origin}/api/integrations/google/callback`;
+export const CALLBACK_PATH = '/api/integrations/google/callback';
+/** Exact redirect URI sent to Google. GOOGLE_REDIRECT_URI (if set) must point at this app's callback route; otherwise APP_URL + route. */
+export function googleCallback() {
+  const explicit = process.env.GOOGLE_REDIRECT_URI?.trim();
+  if (explicit) {
+    const u = new URL(explicit); const local = ['localhost', '127.0.0.1'].includes(u.hostname);
+    if (u.pathname !== CALLBACK_PATH || u.search || u.hash || (u.protocol !== 'https:' && !(local && u.protocol === 'http:'))) throw new Error('GOOGLE_REDIRECT_URI must be https://<host>' + CALLBACK_PATH + ' (http only for localhost)');
+    return u.origin + CALLBACK_PATH;
+  }
+  return `${new URL(process.env.APP_URL || 'http://localhost:3002').origin}${CALLBACK_PATH}`;
+}
 type Token = { refreshToken:string; grantedScope:string; userId:string; organizationId:string };
 const tokenKey = (clientId:string,provider:GoogleProvider) => `oauth-${clientId}-${provider}`;
 export async function storeGoogleToken(clientId:string,provider:GoogleProvider,value:Token) { await writePrivate(tokenKey(clientId,provider),value); }

@@ -7,7 +7,7 @@ import { ApproveRejectControl } from './approval-controls';
 import { GoldenImportForm } from './golden-import';
 import { IdentityControls } from './identity-controls';
 
-export const clientNav = [['ai-presence', 'Presença em IA'], ['golden', 'Testes GOLDEN'], ['identidade', 'Identidade'], ['demand', 'Demanda'], ['seo', 'SEO'], ['prompts', 'Prompts'], ['competitors', 'Concorrentes'], ['sources', 'Fontes'], ['aprovacoes', 'Aprovações'], ['actions', 'Ações'], ['content', 'Conteúdos'], ['experiments', 'Experimentos'], ['reports', 'Relatórios'], ['atividade', 'Atividade']] as const;
+export const clientNav = [['google', 'Google / SEO'], ['ai-presence', 'Presença em IA'], ['golden', 'Testes GOLDEN'], ['identidade', 'Identidade'], ['demand', 'Demanda'], ['seo', 'SEO'], ['prompts', 'Prompts'], ['competitors', 'Concorrentes'], ['sources', 'Fontes'], ['aprovacoes', 'Aprovações'], ['actions', 'Ações'], ['content', 'Conteúdos'], ['experiments', 'Experimentos'], ['reports', 'Relatórios'], ['atividade', 'Atividade']] as const;
 
 export async function ClientTabs({ id, active }: { id: string; active: string }) {
   const pending = await db.action.count({ where: { clientId: id, status: { in: ['PROPOSED', 'WAITING_APPROVAL'] } } });

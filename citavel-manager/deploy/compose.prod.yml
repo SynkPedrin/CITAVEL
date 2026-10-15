@@ -1,0 +1,26 @@
+# Production stack. Secrets come from deploy/.env.production (never committed). HTTPS by Caddy (Let's Encrypt).
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment: { POSTGRES_DB: citavel_manager, POSTGRES_USER: citavel, POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?set in .env.production}" }
+    volumes: [ "db:/var/lib/postgresql/data" ]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U citavel -d citavel_manager"], interval: 5s, retries: 10 }
+  manager:
+    image: citavel-manager:${RELEASE:-latest}
+    build: { context: .., dockerfile: Dockerfile }
+    restart: unless-stopped
+    env_file: .env.production
+    environment:
+      DATABASE_URL: postgresql://citavel:${POSTGRES_PASSWORD}@db:5432/citavel_manager
+      REPORT_STORAGE_DIR: /app/.runtime/reports
+    volumes: [ "runtime:/app/.runtime" ]   # encrypted platform config + private PDFs
+    depends_on: { db: { condition: service_healthy } }
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: [ "80:80", "443:443" ]
+    environment: { MANAGER_DOMAIN: "${MANAGER_DOMAIN:?set in .env.production}" }
+    volumes: [ "./Caddyfile:/etc/caddy/Caddyfile:ro", "caddy:/data" ]
+    depends_on: [ manager ]
+volumes: { db: {}, runtime: {}, caddy: {} }
